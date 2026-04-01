@@ -41,7 +41,7 @@ steps:
 
   #  Deploy Cloud Function
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: deploy-cloud-function-my-cloud-function
+    id: deploy-cloud-function-my-cloud-function-2
     waitFor:
       - install-and-test
     args:
