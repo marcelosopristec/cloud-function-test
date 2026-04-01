@@ -64,3 +64,6 @@ steps:
     volumes:
       - name: "env"
         path: "/env"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
