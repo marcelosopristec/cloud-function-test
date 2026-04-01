@@ -1,0 +1,66 @@
+steps:
+
+  - name: python
+    id: upgrade-pip
+    entrypoint: python
+    args: ["-m", "pip", "install", "--upgrade", "pip"]
+
+  - name: python:3.12-slim
+    id: install-and-test
+    entrypoint: bash
+    args: [
+        "-c",
+        python -m pip install -r ./requirements.txt
+      ]
+
+  #  Deploy Cloud Function
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-cloud-function-my-cloud-function
+    waitFor:
+      - install-and-test
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - my_function
+      - "--gen2"
+      - "--region=us-central1"
+      - "--runtime=python312"
+      - "--source=."
+      - "--entry-point=hello_world"
+      - "--no-allow-unauthenticated"
+      - "--service-account"
+      - $_SERVICE_ACCOUNT_ID@$PROJECT_ID.iam.gserviceaccount.com
+      - "--trigger-http"
+      - "--memory=768MB"
+      - "--cpu=0.583"
+      - "--set-secrets=TOKEN_1=TOKEN_1:latest,TOKEN_2=TOKEN_2:latest,TOKEN_3=TOKEN_3:latest"
+    volumes:
+      - name: "env"
+        path: "/env"
+
+  #  Deploy Cloud Function
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-cloud-function-my-cloud-function
+    waitFor:
+      - install-and-test
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - my_function_2
+      - "--gen2"
+      - "--region=us-central1"
+      - "--runtime=python312"
+      - "--source=."
+      - "--entry-point=hello_world_2"
+      - "--no-allow-unauthenticated"
+      - "--service-account"
+      - $_SERVICE_ACCOUNT_ID@$PROJECT_ID.iam.gserviceaccount.com
+      - "--trigger-http"
+      - "--memory=768MB"
+      - "--cpu=0.583"
+      - "--set-secrets=TOKEN_1=TOKEN_1:latest,TOKEN_2=TOKEN_2:latest,TOKEN_3=TOKEN_3:latest"
+    volumes:
+      - name: "env"
+        path: "/env"
